@@ -37,8 +37,8 @@ async def calc(update, context):
         return
 
     # 加减乘除
-    if not re.fullmatch(r'\d+[+\-*/]\d+', text):
-        return
+    if not re.fullmatch(r"[0-9+\-*/().\s]+", text):
+    return
 
     try:
         result = eval(text)
