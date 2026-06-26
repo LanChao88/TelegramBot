@@ -1,13 +1,12 @@
 from telegram import Update
-import re
-from telegram.ext import Application, MessageHandler, filters
+from telegram.ext import Application, MessageHandler, ContextTypes, filters
 import os
+import re
 
 TOKEN = os.getenv("TOKEN")
 
 
-async def calc(update, context):
-
+async def calc(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
 
     # 地址功能
@@ -36,27 +35,29 @@ async def calc(update, context):
         )
         return
 
-    # 加减乘除
-    if not re.fullmatch(r"[0-9+\-*/().\s]+", text):
+    # 不是数学表达式
+    if (
+        not re.fullmatch(r"[0-9+\-*/().\s]+", text)
+        or not re.search(r"[+\-*/]", text)
+    ):
         return
 
     try:
         result = eval(text)
 
-        if isinstance(result, float):
-            if result.is_integer():
-                result = int(result)
+        if isinstance(result, float) and result.is_integer():
+            result = int(result)
 
         await update.message.reply_text(str(result))
 
-    except:
+    except Exception:
         pass
 
 
 app = Application.builder().token(TOKEN).build()
 
 app.add_handler(
-    MessageHandler(filters.TEXT, calc)
+    MessageHandler(filters.TEXT & ~filters.COMMAND, calc)
 )
 
 print("机器人启动成功")
