@@ -1,10 +1,10 @@
 from telegram import Update
 import re
 from telegram.ext import Application, MessageHandler, filters
-
 import os
 
 TOKEN = os.getenv("TOKEN")
+
 
 async def calc(update, context):
 
@@ -31,27 +31,27 @@ async def calc(update, context):
 """
 
         await update.message.reply_text(
-    msg,
-    parse_mode="HTML"
-)
+            msg,
+            parse_mode="HTML"
+        )
         return
 
-   # 加减乘除
-if not re.fullmatch(r"[0-9+\-*/().\s]+", text):
-    return
-    
+    # 加减乘除
+    if not re.fullmatch(r"[0-9+\-*/().\s]+", text):
+        return
 
-try:
-    result = eval(text)
+    try:
+        result = eval(text)
 
-    if isinstance(result, float):
-        if result.is_integer():
-            result = int(result)
+        if isinstance(result, float):
+            if result.is_integer():
+                result = int(result)
 
-    await update.message.reply_text(str(result))
+        await update.message.reply_text(str(result))
 
-except:
-    pass
+    except:
+        pass
+
 
 app = Application.builder().token(TOKEN).build()
 
